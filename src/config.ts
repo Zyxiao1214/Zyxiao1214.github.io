@@ -7,7 +7,7 @@ export const SITE = {
   author: 'Zyxiao',
   description: '技术笔记与生活随笔，记录正在发生的学习和思考。',
   locale: 'zh-CN',
-  email: 'hello@example.com',
+  email: 'zhangyixiao@neu.edu.cn',
   github: 'https://github.com/',
 };
 
