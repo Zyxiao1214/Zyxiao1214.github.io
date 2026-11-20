@@ -1,0 +1,19 @@
+---
+import { SITE } from '../config';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line">
+  <div
+    class="mx-auto flex w-full max-w-5xl flex-col gap-3 px-5 py-10 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-8"
+  >
+    <p>© {year} {SITE.author}</p>
+    <p class="flex items-center gap-5">
+      <a href="/rss.xml" class="transition-colors hover:text-ink">RSS 订阅</a>
+      <a href={SITE.github} target="_blank" rel="noopener" class="transition-colors hover:text-ink">
+        GitHub
+      </a>
+      <a href={`mailto:${SITE.email}`} class="transition-colors hover:text-ink">邮箱</a>
+    </p>
+  </div>
+</footer>

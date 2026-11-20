@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config';
+
+const stack = [
+  'Astro',
+  'TypeScript',
+  'Tailwind CSS',
+  'Markdown / Content Collections',
+  'GitHub Pages',
+];
+---
+
+<BaseLayout title="关于" description={`关于 ${SITE.author}`}>
+  <div class="grid gap-12 lg:grid-cols-[16rem_minmax(0,1fr)]">
+    <!-- 左侧名片 -->
+    <aside>
+      <div class="rounded-3xl border border-line bg-surface p-6">
+        <div
+          class="grid size-20 place-items-center rounded-2xl bg-accent text-2xl font-bold text-accent-ink"
+        >
+          {SITE.author.slice(0, 1).toUpperCase()}
+        </div>
+        <p class="mt-5 text-lg font-semibold tracking-tight">{SITE.author}</p>
+        <p class="mt-1 text-sm text-muted">写代码，也写点别的</p>
+
+        <div class="mt-6 space-y-2 text-sm">
+          <a href={SITE.github} target="_blank" rel="noopener" class="block text-muted transition-colors hover:text-accent">
+            GitHub ↗
+          </a>
+          <a href={`mailto:${SITE.email}`} class="block text-muted transition-colors hover:text-accent">
+            {SITE.email}
+          </a>
+          <a href="/rss.xml" class="block text-muted transition-colors hover:text-accent">
+            RSS 订阅 ↗
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 右侧正文 -->
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">关于我</h1>
+
+      <div class="prose-blog mt-8">
+        <p>
+          你好，我是 {SITE.author}。这里是我的个人博客，用来记录学习过程中的技术笔记，
+          以及一些生活里的观察和思考。
+        </p>
+        <p>
+          我相信写作是最好的学习方式：把一件事讲清楚，才知道自己到底懂了多少。
+          所以这里的文章会尽量写得具体、可验证，而不是堆砌结论。
+        </p>
+
+        <h2>这个博客是怎么来的</h2>
+        <p>
+          它是从零手搭的静态站点：内容用 Markdown 写，构建时生成静态页面，
+          部署在 GitHub Pages 上，不依赖任何后端服务。
+        </p>
+
+        <h2>技术栈</h2>
+        <ul>
+          {stack.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>联系方式</h2>
+        <p>
+          想交流可以直接发邮件到 <a href={`mailto:${SITE.email}`}>{SITE.email}</a>，
+          或者在 <a href={SITE.github} target="_blank" rel="noopener">GitHub</a> 上找我。
+        </p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

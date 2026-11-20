@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getAllPosts } from '../utils/posts';
+import { SITE } from '../config';
+
+const posts = await getAllPosts();
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="relative overflow-hidden rounded-3xl border border-line bg-surface px-6 py-12 sm:px-12 sm:py-16">
+    <div
+      class="pointer-events-none absolute -right-24 -top-32 size-72 rounded-full bg-accent/15 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="relative max-w-2xl">
+      <p class="inline-flex items-center gap-2 rounded-full border border-line bg-page px-3 py-1 text-xs text-muted">
+        <span class="size-1.5 rounded-full bg-accent"></span>
+        技术笔记 · 生活随笔
+      </p>
+      <h1 class="mt-6 text-3xl font-bold leading-[1.25] tracking-tight sm:text-[2.6rem]">
+        把学习写成文章，<br class="hidden sm:block" />把想法想得更清楚。
+      </h1>
+      <p class="mt-5 text-base leading-relaxed text-muted">
+        {SITE.description}
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a
+          href="#latest"
+          class="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition hover:opacity-90"
+        >
+          阅读最新文章
+        </a>
+        <a
+          href="/rss.xml"
+          class="rounded-full border border-line px-5 py-2.5 text-sm text-muted transition hover:border-accent/40 hover:text-ink"
+        >
+          RSS 订阅
+        </a>
+      </div>
+      <p class="mt-8 text-xs text-muted">
+        已发布 {posts.length} 篇文章 · {tags.length} 个标签
+      </p>
+    </div>
+  </section>
+
+  <!-- 文章列表 -->
+  <section id="latest" class="mt-14 scroll-mt-24">
+    <div class="flex items-end justify-between">
+      <h2 class="text-xl font-semibold tracking-tight">最近文章</h2>
+      <a href="/tags/" class="text-sm text-muted transition-colors hover:text-accent">浏览标签 →</a>
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-6 rounded-2xl border border-dashed border-line bg-surface p-8 text-sm text-muted">
+          还没有文章。在 <code>src/content/posts/</code> 里新建一个 <code>.md</code> 文件即可。
+        </p>
+      )
+    }
+  </section>
+
+  <!-- 标签云 -->
+  {
+    tags.length > 0 && (
+      <section class="mt-14">
+        <h2 class="text-xl font-semibold tracking-tight">标签</h2>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {tags.map(([tag, count]) => (
+            <a
+              href={`/tags/${encodeURIComponent(tag)}/`}
+              class="rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm text-muted transition hover:border-accent/40 hover:text-accent"
+            >
+              #{tag}
+              <span class="ml-1 text-xs text-muted/70">{count}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

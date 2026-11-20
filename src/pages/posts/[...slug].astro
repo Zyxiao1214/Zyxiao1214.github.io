@@ -1,0 +1,78 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { CATEGORY_LABEL } from '../../config';
+import { formatDate, getAllPosts, readingTime, toISODate, type Post } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const { title, description, category, tags, pubDate, updatedDate } = post.data;
+const minutes = readingTime(post.body);
+const updated = updatedDate && updatedDate.getTime() !== pubDate.getTime() ? updatedDate : null;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_14rem]">
+    <article class="min-w-0">
+      <header class="border-b border-line pb-8">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+          <span class="rounded-full bg-accent-soft px-2.5 py-1 font-medium text-accent">
+            {CATEGORY_LABEL[category]}
+          </span>
+          <time datetime={toISODate(pubDate)}>{formatDate(pubDate)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{minutes} 分钟阅读</span>
+          {updated && <span class="text-muted/80">· 更新于 {formatDate(updated)}</span>}
+        </div>
+
+        <h1 class="mt-5 text-3xl font-bold leading-tight tracking-tight sm:text-[2.4rem]">
+          {title}
+        </h1>
+        <p class="mt-4 text-base leading-relaxed text-muted">{description}</p>
+      </header>
+
+      <div class="prose-blog mt-10">
+        <Content />
+      </div>
+
+      {
+        tags.length > 0 && (
+          <footer class="mt-14 flex flex-wrap items-center gap-2 border-t border-line pt-8">
+            <span class="text-xs text-muted">标签</span>
+            {tags.map((tag) => (
+              <a
+                href={`/tags/${encodeURIComponent(tag)}/`}
+                class="rounded-full border border-line px-3 py-1 text-xs text-muted transition hover:border-accent/40 hover:text-accent"
+              >
+                #{tag}
+              </a>
+            ))}
+          </footer>
+        )
+      }
+
+      <div class="mt-10">
+        <a href="/" class="text-sm text-muted transition-colors hover:text-accent">← 返回首页</a>
+      </div>
+    </article>
+
+    <aside class="hidden lg:block">
+      <div class="sticky top-24">
+        <TableOfContents headings={headings} />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

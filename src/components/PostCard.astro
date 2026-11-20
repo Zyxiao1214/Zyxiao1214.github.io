@@ -1,0 +1,45 @@
+---
+import { CATEGORY_LABEL } from '../config';
+import { formatDate, readingTime, toISODate, type Post } from '../utils/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, category, tags, pubDate } = post.data;
+const minutes = readingTime(post.body);
+---
+
+<article
+  class="group relative flex h-full flex-col rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgb(16_18_24/0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_16px_36px_-20px_rgb(91_75_245/0.5)]"
+>
+  <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+    <span class="rounded-full bg-accent-soft px-2.5 py-1 font-medium text-accent">
+      {CATEGORY_LABEL[category]}
+    </span>
+    <time datetime={toISODate(pubDate)}>{formatDate(pubDate)}</time>
+    <span aria-hidden="true">·</span>
+    <span>{minutes} 分钟阅读</span>
+  </div>
+
+  <h3 class="mt-4 text-lg font-semibold leading-snug tracking-tight">
+    <a href={`/posts/${post.id}/`} class="transition-colors after:absolute after:inset-0 group-hover:text-accent">
+      {title}
+    </a>
+  </h3>
+
+  <p class="mt-2.5 line-clamp-3 text-sm leading-relaxed text-muted">{description}</p>
+
+  {
+    tags.length > 0 && (
+      <div class="mt-auto flex flex-wrap gap-2 pt-5">
+        {tags.map((tag) => (
+          <a href={`/tags/${encodeURIComponent(tag)}/`} class="relative z-10 text-xs text-muted transition-colors hover:text-accent">
+            #{tag}
+          </a>
+        ))}
+      </div>
+    )
+  }
+</article>

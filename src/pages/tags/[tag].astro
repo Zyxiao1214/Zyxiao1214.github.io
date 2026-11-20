@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getAllPosts, type Post } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+
+  const tags = new Set<string>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) tags.add(tag);
+  }
+
+  return [...tags].map((tag) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((post) => post.data.tags.includes(tag)) },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: Post[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag}`} description={`标签 #${tag} 下的全部文章`}>
+  <header>
+    <a href="/tags/" class="text-sm text-muted transition-colors hover:text-accent">← 全部标签</a>
+    <h1 class="mt-4 text-3xl font-bold tracking-tight">#{tag}</h1>
+    <p class="mt-3 text-sm text-muted">共 {posts.length} 篇文章</p>
+  </header>
+
+  <div class="mt-8 grid gap-5 sm:grid-cols-2">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</BaseLayout>

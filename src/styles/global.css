@@ -1,0 +1,208 @@
+@import 'tailwindcss';
+
+/* 用 class 控制深色模式（html.dark），而不是跟随系统，方便用户手动切换 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * 设计令牌：所有颜色都从这里取，深浅色只是覆盖同名变量。
+ * 调色板 = 中性灰底 + 紫色强调色，符合"现代卡片型"的观感。
+ */
+@theme {
+  --font-sans:
+    'Inter', 'Noto Sans SC', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --color-page: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-ink: #14161b;
+  --color-muted: #5d6470;
+  --color-line: #e4e6ec;
+  --color-accent: #5b4bf5;
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: #ece9ff;
+
+  --radius-card: 1rem;
+}
+
+.dark {
+  --color-page: #0a0c10;
+  --color-surface: #13161c;
+  --color-ink: #e9ebf1;
+  --color-muted: #99a1af;
+  --color-line: #242833;
+  --color-accent: #a79cff;
+  --color-accent-ink: #14121f;
+  --color-accent-soft: #1e1b35;
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+/* 锚点跳转时给吸顶导航留出空间 */
+.prose-blog :is(h2, h3, h4) {
+  scroll-margin-top: 6rem;
+}
+
+/* ---------- 文章正文排版（自写，避免额外引入 typography 插件） ---------- */
+.prose-blog {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--color-ink);
+  overflow-wrap: break-word;
+}
+
+.prose-blog > * + * {
+  margin-top: 1.3em;
+}
+
+.prose-blog h2 {
+  margin-top: 2.6em;
+  margin-bottom: 0.9em;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.prose-blog h3 {
+  margin-top: 2em;
+  margin-bottom: 0.7em;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.prose-blog h4 {
+  margin-top: 1.6em;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.prose-blog a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+.prose-blog a:hover {
+  text-decoration-color: var(--color-accent);
+}
+
+.prose-blog strong {
+  font-weight: 600;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  padding-left: 1.4em;
+}
+
+.prose-blog ul {
+  list-style: disc;
+}
+
+.prose-blog ol {
+  list-style: decimal;
+}
+
+.prose-blog li + li {
+  margin-top: 0.4em;
+}
+
+.prose-blog li::marker {
+  color: var(--color-accent);
+}
+
+.prose-blog blockquote {
+  padding: 0.9em 1.2em;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 0.75rem 0.75rem 0;
+  background: var(--color-accent-soft);
+  color: var(--color-muted);
+}
+
+.prose-blog blockquote > * + * {
+  margin-top: 0.7em;
+}
+
+.prose-blog :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  background: var(--color-accent-soft);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+.prose-blog pre {
+  overflow-x: auto;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.9rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.prose-blog pre code {
+  font-family: var(--font-mono);
+  background: transparent;
+  padding: 0;
+}
+
+.prose-blog table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.prose-blog th,
+.prose-blog td {
+  padding: 0.55em 0.8em;
+  border: 1px solid var(--color-line);
+  text-align: left;
+}
+
+.prose-blog th {
+  background: var(--color-accent-soft);
+  font-weight: 600;
+}
+
+.prose-blog img {
+  border: 1px solid var(--color-line);
+  border-radius: 0.9rem;
+}
+
+.prose-blog hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+/* ---------- 代码块双主题：浅色走 Astro 内联样式，深色走下面的变量 ---------- */
+html.dark .astro-code,
+html.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
